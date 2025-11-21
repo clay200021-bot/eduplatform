@@ -1,0 +1,233 @@
+﻿<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EduPlatform – Eng yaxshi kurslar va treninglar</title>
+    <meta name="description" content="React, Python, UI/UX, Marketing va boshqa ko'plab zamonaviy kurslar va intensiv treninglar bir joyda!" />
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- React 18 + React DOM -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <!-- Babel (JSX → JS) -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <style>
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .animate-slide-in { animation: slideIn 0.6s ease-out forwards; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 min-h-screen">
+
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        const EduPlatform = () => {
+            const [activeTab, setActiveTab] = useState('courses');
+            const [selectedCourse, setSelectedCourse] = useState(null);
+            const [enrolledCourses, setEnrolledCourses] = useState([]);
+
+            // Ma'lumotlar (real loyihada API dan keladi)
+            const courses = [
+                { id: 1, title: "React.js Asoslari", instructor: "Abdullayev Sardor", duration: "8 hafta", students: 1250, rating: 4.8, price: "299,000 so'm", level: "Boshlang'ich", category: "Dasturlash", description: "React.js dasturlash tilini noldan o'rganing va zamonaviy veb-ilovalar yarating.", modules: ["React asoslari va JSX", "Komponentlar va Props", "State va Hooks", "React Router", "API bilan ishlash", "Redux asoslari", "Real loyiha"] },
+                { id: 2, title: "Python Backend Development", instructor: "Karimova Dilnoza", duration: "10 hafta", students: 980, rating: 4.9, price: "349,000 so'm", level: "O'rta", category: "Dasturlash", description: "Python va Django yordamida professional backend dasturlarini yaratishni o'rganing.", modules: ["Python asoslari", "OOP", "Django framework", "Database va ORM", "REST API", "Autentifikatsiya", "Deploy"] },
+                { id: 3, title: "UI/UX Dizayn Mastery", instructor: "Toshmatov Javohir", duration: "6 hafta", students: 756, rating: 4.7, price: "279,000 so'm", level: "Boshlang'ich", category: "Dizayn", description: "Foydalanuvchi tajribasi va interfeys dizaynini professional darajada o'rganing.", modules: ["Dizayn tamoyillari", "Figma", "Wireframing", "Rang va tipografiya", "User research", "Portfolio"] },
+                { id: 4, title: "Digital Marketing Pro", instructor: "Yusupova Nigora", duration: "8 hafta", students: 1420, rating: 4.6, price: "259,000 so'm", level: "Boshlang'ich", category: "Marketing", description: "Raqamli marketingning barcha yo'nalishlarini chuqur o'rganing.", modules: ["SMM", "Google Ads", "SEO", "Content marketing", "Email marketing", "Analytics"] }
+            ];
+
+            const trainings = [
+                { id: 1, title: "JavaScript Intensiv – 3 kunlik Bootcamp", trainer: "Rahimov Bekzod", date: "5-7 Dekabr, 2025", time: "10:00-18:00", location: "Online / IT Park Toshkent", participants: 47, max: 50, price: "450,000 so'm" },
+                { id: 2, title: "Leadership va Jamoa Boshqaruvi", trainer: "Mahmudova Sevara", date: "12-13 Dekabr, 2025", time: "09:00-17:00", location: "Hilton Hotel, Toshkent", participants: 28, max: 30, price: "650,000 so'm" },
+                { id: 3, title: "Startup va Biznes Rejalashtirish", trainer: "Xolmatov Aziz", date: "15-16 Dekabr, 2025", time: "10:00-16:00", location: "IT Park Samarqand", participants: 35, max: 40, price: "550,000 so'm" }
+            ];
+
+            const enroll = (item) => {
+                if (!enrolledCourses.find(c => c.id === item.id)) {
+                    setEnrolledCourses([...enrolledCourses, item]);
+                    alert(`Tabriklaymiz! "${item.title}" ga muvaffaqiyatli yozildingiz!`);
+                } else {
+                    alert("Siz allaqachon ushbu kurs/treningga yozilgansiz!");
+                }
+            };
+
+            const CourseCard = ({ c }) => (
+                <div className="bg-white rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-500 animate-slide-in">
+                    <div className="bg-gradient-to-r from-indigo-500 to-purple-600 h-52 flex items-center justify-center text-9xl">Book</div>
+                    <div className="p-6">
+                        <div className="flex gap-2 mb-3">
+                            <span className="bg-indigo-100 text-indigo-700 text-xs font-bold px-3 py-1 rounded-full">{c.level}</span>
+                            <span className="bg-purple-100 text-purple-700 text-xs font-bold px-3 py-1 rounded-full">{c.category}</span>
+                        </div>
+                        <h3 className="text-xl font-bold text-gray-800 mb-1">{c.title}</h3>
+                        <p className="text-gray-600 text-sm mb-4">{c.instructor}</p>
+                        <div className="flex justify-between text-sm text-gray-600 mb-4">
+                            <span>Duration: {c.duration}</span>
+                            <span>Students: {c.students.toLocaleString()}</span>
+                            <span>Rating: {c.rating} stars</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                            <span className="text-2xl font-extrabold text-indigo-600">{c.price}</span>
+                            <button onClick={() => setSelectedCourse(c)} className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-indigo-700 hover:to-purple-700 transition">
+                                Batafsil →
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+
+            const TrainingCard = ({ t }) => (
+                <div className="bg-white rounded-2xl shadow-xl p-6 hover:shadow-2xl transition-all duration-500 animate-slide-in">
+                    <div className="flex justify-between items-start mb-4">
+                        <div>
+                            <h3 className="text-xl font-bold text-gray-800">{t.title}</h3>
+                            <p className="text-gray-600">Trener: {t.trainer}</p>
+                        </div>
+                        <span className="text-5xl">Target</span>
+                    </div>
+                    <div className="space-y-2 text-sm text-gray-700">
+                        <div>Date: {t.date} | {t.time}</div>
+                        <div>Location: {t.location}</div>
+                    </div>
+                    <div className="my-4">
+                        <div className="flex justify-between text-sm mb-1">
+                            <span>{t.participants}/{t.max} ishtirokchi</span>
+                            <span>%{Math.round((t.participants / t.max) * 100)}</span>
+                        </div>
+                        <div className="w-full bg-gray-200 rounded-full h-3">
+                            <div className="bg-gradient-to-r from-green-400 to-indigo-600 h-3 rounded-full transition-all duration-1000" style={{width: `${(t.participants/t.max)*100}%`}}></div>
+                        </div>
+                    </div>
+                    <div className="flex justify-between items-center">
+                        <span className="text-2xl font-bold text-indigo-600">{t.price}</span>
+                        <button onClick={() => enroll(t)} className="bg-gradient-to-r from-green-500 to-indigo-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-green-600 hover:to-indigo-700 transition">
+                            Ro'yxatdan o'tish
+                        </button>
+                    </div>
+                </div>
+            );
+
+            const CourseModal = ({ course, onClose }) => course && (
+                <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50" onClick={onClose}>
+                    <div className="bg-white rounded-3xl max-w-4xl w-full max-h-[90vh] overflow-y-auto scrollbar-hide animate-slide-in" onClick={e => e.stopPropagation()}>
+                        <div className="bg-gradient-to-r from-indigo-600 to-purple-700 p-10 text-white relative">
+                            <button onClick={onClose} className="absolute top-4 right-6 text-4xl hover:opacity-70">×</button>
+                            <h2 className="text-4xl font-bold mb-3">{course.title}</h2>
+                            <p className="text-xl opacity-90">Instruktor: {course.instructor}</p>
+                        </div>
+                        <div className="p-8">
+                            <div className="grid grid-cols-3 gap-6 mb-8">
+                                <div className="bg-indigo-50 p-6 rounded-2xl text-center">Duration<br/><span className="text-3xl font-bold text-indigo-600">{course.duration}</span></div>
+                                <div className="bg-purple-50 p-6 rounded-2xl text-center">Students<br/><span className="text-3xl font-bold text-purple-600">{course.students}</span></div>
+                                <div className="bg-pink-50 p-6 rounded-2xl text-center">Rating<br/><span className="text-3xl font-bold text-pink-600">{course.rating} stars</span></div>
+                            </div>
+                            <p className="text-lg text-gray-700 mb-8 leading-relaxed">{course.description}</p>
+                            <h3 className="text-2xl font-bold mb-4">O'quv dasturi</h3>
+                            <div className="space-y-3">
+                                {course.modules.map((m, i) => (
+                                    <div key={i} className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl">
+                                        <span className="text-2xl">Checkmark</span>
+                                        <span className="text-gray-800 font-medium">{m}</span>
+                                    </div>
+                                ))}
+                            </div>
+                            <div className="mt-10 flex justify-between items-center bg-gray-50 p-8 rounded-2xl">
+                                <div>
+                                    <p className="text-gray-600">Kurs narxi</p>
+                                    <p className="text-4xl font-extrabold text-indigo-600">{course.price}</p>
+                                </div>
+                                <button onClick={() => { enroll(course); onClose(); }} className="bg-gradient-to-r from-indigo-600 to-purple-700 text-white text-xl px-10 py-5 rounded-2xl font-bold hover:from-indigo-700 hover:to-purple-800 transition transform hover:scale-105">
+                                    Kursga yozilish
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+
+            return (
+                <>
+                    {/* Header */}
+                    <header className="bg-white/90 backdrop-blur-lg shadow-lg sticky top-0 z-40">
+                        <div className="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
+                            <div className="flex items-center gap-4">
+                                <div className="bg-gradient-to-br from-indigo-500 to-purple-600 p-3 rounded-2xl text-4xl">Graph Up</div>
+                                <div>
+                                    <h1 className="text-3xl font-extrabold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">EduPlatform</h1>
+                                    <p className="text-sm text-gray-600">Bilim – kelajak kaliti</p>
+                                </div>
+                            </div>
+                            <div className="text-right">
+                                <p className="text-gray-600">Mening kurslarim</p>
+                                <p className="text-2xl font-bold text-indigo-600">{enrolledCourses.length} ta</p>
+                            </div>
+                        </div>
+                    </header>
+
+                    {/* Tabs */}
+                    <div className="max-w-7xl mx-auto px-6 mt-10">
+                        <div className="flex justify-center gap-4 bg-white/70 backdrop-blur rounded-2xl p-2 shadow-xl">
+                            {['courses', 'trainings', 'enrolled'].map(tab => (
+                                <button key={tab} onClick={() => setActiveTab(tab)}
+                                    className={`px-8 py-4 rounded-xl font-bold text-lg transition-all ${activeTab === tab ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg' : 'text-gray-700 hover:bg-gray-100'}`}>
+                                    {tab === 'courses' && 'Onlayn Kurslar'}
+                                    {tab === 'trainings' && 'Treninglar'}
+                                    {tab === 'enrolled' && 'Mening kurslarim'}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Content */}
+                    <div className="max-w-7xl mx-auto px-6 py-12">
+                        {activeTab === 'courses' && (
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                                {courses.map(c => <CourseCard key={c.id} c={c} />)}
+                            </div>
+                        )}
+                        {activeTab === 'trainings' && (
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                                {trainings.map(t => <TrainingCard key={t.id} t={t} />)}
+                            </div>
+                        )}
+                        {activeTab === 'enrolled' && (
+                            <div className="text-center py-20">
+                                {enrolledCourses.length === 0 ? (
+                                    <p className="text-2xl text-gray-600">Hozircha hech qanday kursga yozilmadingiz. Yuqoridagi kurslardan birini tanlang!</p>
+                                ) : (
+                                    <div className="space-y-6">
+                                        <h2 className="text-4xl font-bold text-indigo-600 mb-8">Siz yozilgan kurslar</h2>
+                                        {enrolledCourses.map(c => (
+                                            <div key={c.id} className="bg-white p-8 rounded-2xl shadow-xl flex justify-between items-center">
+                                                <div>
+                                                    <h3 className="text-2xl font-bold">{c.title}</h3>
+                                                    <p className="text-gray-600">{c.instructor} • {c.price}</p>
+                                                </div>
+                                                <span className="text-6xl">Trophy</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </div>
+
+                    {selectedCourse && <CourseModal course={selectedCourse} onClose={() => setSelectedCourse(null)} />}
+                </>
+            );
+        };
+
+        ReactDOM.createRoot(document.getElementById('root')).render(<EduPlatform />);
+    </script>
+</body>
+</html>
